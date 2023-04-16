@@ -38,7 +38,7 @@ $row = $query->rowCount();
               <img src="images/Imagen.png" class="card-img-top" alt="...">
               <div class="card-body">
                 <h4 class="card-title text-center"><?=$data['nombre_materia'] ?></h4> 
-                <a href="contenido.php?curso=<?= $data['pm_id']?>" class="btn btn-primary">Acceder</a>
+                <a href="Lista_Laboratorios.php?curso=<?= $data['pm_id']?>" class="btn btn-primary">Acceder</a>
                 <a href="alumnos.php?curso=<?= $data['pm_id']?>" class="btn btn-warning">Ver Alumnos</a>
               </div>
             </div>
