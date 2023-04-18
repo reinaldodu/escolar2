@@ -47,7 +47,9 @@ $row = $query->rowCount();
               <div class="card-body">
                 <h4 class="card-title text-center"><?=$data['nombre_materia'] ?></h4> 
                 <a href="Lista_Laboratorios.php?curso=<?= $data['pm_id']?>" class="btn btn-primary">Acceder</a>
-                <a href="alumnos.php?curso=<?= $data['pm_id']?>" class="btn btn-warning">Ver Alumnos</a>
+                <a href="alumnos.php?curso=<?= $data['pm_id']?>" class="btn btn-warning">Alumnos</a>
+                <button onclick="eliminarMateria(<?= $data['materia_id']?>)" class="btn btn-danger">
+                <i class="fa fa-trash"></i></button>
               </div>
             </div>
         </div>
