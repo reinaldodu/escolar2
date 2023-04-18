@@ -3,51 +3,45 @@
 require_once '../../../includes/conexion.php';
 
 if(!empty($_POST)) {
-    if(empty($_POST['listAlumno']) || empty($_POST['listAProfesor']) || empty($_POST['listPeriodo'])) {
-        $arrResponse = array('status' => false,'msg' => 'Todos los campos son necesarios');
-    } else {
-        $idalumnoprofesor = $_POST['idalumnoprofesor'];
-        $alumno = $_POST['listAlumno'];
-    
-        }
-
-        // CONSULTA PARA INSERTAR
-        $sql = "SELECT * FROM alumno_profesor WHERE alumno_id = ? AND pm_id = ?";
+    if(empty($_POST['email_alumno'])) {
+        $arrResponse = array('status' => false,'msg' => 'Ingrese el email del estudiante');
+    } 
+    else {
+        $email_alumno = $_POST['email_alumno'];
+        $pm_id = $_POST['pm_id'];
+        // Buscar si el el email del alumno existe en la tabla alumnos
+        $sql = "SELECT * FROM alumnos WHERE correo = ?";
         $query = $pdo->prepare($sql);
-        $query->execute(array($alumno,$profesor,$periodo));
-        $resultInsert = $query->fetch(PDO::FETCH_ASSOC);
-
-        // CONSULTA PARA ACTUALIZAR
-        $sql2 = "SELECT * FROM alumno_profesor WHERE alumno_id = ? AND pm_id = AND ap_id != ?";
-        $query2 = $pdo->prepare($sql2);
-        $query2->execute(array($profesor,$alumno,$periodo,$idalumnoprofesor));
-        $resultUpdate = $query2->fetch(PDO::FETCH_ASSOC);
-
-        if($resultInsert > 0) {
-            $arrResponse = array('status' => false,'msg' => 'El alumno ya tiene el grado y el profesor asignado, seleccione otro');
-        } else {
-            if($idalumnoprofesor < 0) {
-                $sql_insert = "INSERT INTO alumno_profesor (alumno_id,pm_id,periodo_id,estadop) VALUES (?,?,?,?)";
+        $query->execute(array($email_alumno));
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        //si existen datos en la consulta obtener el id del alumno
+        if($result > 0) {
+            $alumno = $result['alumno_id'];
+            //Verificar si el alumno existe en la tabla alumno_profesor
+            $sql = "SELECT * FROM alumno_profesor WHERE alumno_id = ? AND pm_id = ?";
+            $query = $pdo->prepare($sql);
+            $query->execute(array($alumno,$pm_id));
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+            
+            //si el alumno ya existe en la tabla alumno_profesor enviar un mensaje de error
+            if($result > 0) {
+                $arrResponse = array('status' => false,'msg' => 'El alumno ya existe en el curso');
+            } else {
+                //Insertar el registro
+                $sql_insert = "INSERT INTO alumno_profesor (alumno_id,pm_id) VALUES (?,?)";
                 $query_insert = $pdo->prepare($sql_insert);
-                $request = $query_insert->execute(array($alumno,$profesor,$periodo,$status));
+                $request = $query_insert->execute(array($alumno,$pm_id));
                 if($request) {
-                    $arrResponse = array('status' => true,'msg' => 'Proceso Alumno creado correctamente'); 
+                    $arrResponse = array('status' => true,'msg' => 'Alumno creado correctamente'); 
                 }
-            }  
-        }
+            }
 
-        if($resultUpdate > 0) {
-            $arrResponse = array('status' => false,'msg' => 'El alumno ya tiene el grado y el profesor asignado, seleccione otro');
         } else {
-            if($idalumnoprofesor < 0) {
-                $sql_update = "UPDATE alumno_profesor SET alumno_id = ?,pm_id = ?,periodo_id = ?,estadop = ? WHERE ap_id = ?";
-                $query_update = $pdo->prepare($sql_update);
-                $request2 = $query_update->execute(array($alumno,$profesor,$periodo,$status,$idalumnoprofesor));
-                if($request2) {
-                    $arrResponse = array('status' => true,'msg' => 'Proceso Alumno actualizado correctamente');
-                }
-             }
+            $arrResponse = array('status' => false,'msg' => 'El email del alumno no existe, verifique');
         }
     }
     echo json_encode($arrResponse,JSON_UNESCAPED_UNICODE);
 }
+?>
+
+

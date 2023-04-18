@@ -9,20 +9,12 @@
       </div>
       <div class="modal-body">
         <form id="formAlumnoProfesor" name="formAlumnoProfesor">
-            <input type="hidden" name="idalumnoprofesor" id="idalumnoprofesor" value="">
+            <input type="hidden" name="pm_id" id="pm_id" value="">
             <div class="form-group">
-                <label for="listEstado">Seleccione el Alumno</label>
-                <select class="form-control" name="listAlumno" id="listAlumno">
-                    <!-- CONTENIDO AJAX -->
-                </select>
+                <label for="email_alumno">Escriba el email del alumno</label>
+                <input type="text" class="form-control" name="email_alumno" id="email_alumno">
             </div>
-            <div class="form-group">
-              <label for="listEstado">Estado</label>
-              <select class="form-control" name="listEstado" id="listEstado">
-                  <option value="1">Activo</option>
-                  <option value="2">Inactivo</option>
-              </select>
-          </div>
+            
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             <button class="btn btn-primary" id="action" type="submit">Guardar</button>

@@ -35,7 +35,15 @@ $row = $query->rowCount();
         ?>
         <div class="col-md-4 text-center border mt-3 p-4 bg-light">
             <div class="card m-2 shadow" style="width: 18rem";>
-              <img src="images/Imagen.png" class="card-img-top" alt="...">
+            <!-- validar si la imagen es jpg o png -->
+            <?php 
+              $img='images/Imagen.png';
+              if(file_exists('images/materias/'.$data['materia_id'].'.jpg')){ 
+                $img = 'images/materias/'.$data['materia_id'].'.jpg';
+              } elseif (file_exists('images/materias/'.$data['materia_id'].'.png')){
+                $img = 'images/materias/'.$data['materia_id'].'.png';
+              } ?>
+              <img src=<?= $img ?> class="card-img-top" height="200px" alt="...">
               <div class="card-body">
                 <h4 class="card-title text-center"><?=$data['nombre_materia'] ?></h4> 
                 <a href="Lista_Laboratorios.php?curso=<?= $data['pm_id']?>" class="btn btn-primary">Acceder</a>

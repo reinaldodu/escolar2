@@ -2,8 +2,15 @@
     require_once 'includes/header.php';
     require_once 'includes/modals/modal_laboratorio.php';
     require_once '../includes/conexion.php';
-
-    $sql = "SELECT * FROM laboratorios";
+    
+    if ($_GET['curso']) {
+        $curso = $_GET['curso'];
+    }
+    else {
+      $curso = 0;
+    }
+    
+    $sql = "SELECT * FROM laboratorios WHERE materia_id = $curso";
     $query = $pdo->prepare(($sql));
     $query->execute();
     $row = $query->rowCount();

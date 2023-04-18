@@ -1,76 +1,13 @@
-$('#tablealumnoprofesor').DataTable();
-var tablealumnoprofesor;
-
-document.addEventListener('DOMContentLoaded',function(){
-    tablealumnoprofesor = $('#tablealumnoprofesor').DataTable({
-        "aProcessing": true,
-        "aServerSide": true,
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
-        },
-        "ajax": {
-            "url": "./models/alumno-profesor/table_alumno_profesor.php",
-            "dataSrc":""
-        },
-        "columns": [
-            {"data":"acciones"},
-            {"data":"ap_id"},
-            {"data":"nombre_alumno"},
-            {"data":"nombre"},
-            {"data":"nombre_grado"},
-            {"data":"nombre_aula"},
-            {"data":"nombre_materia"},
-            {"data":"nombre_periodo"},
-            {"data":"estadop"}
-        ],
-        "dom": "lBfrtip",
-        "buttons": [
-            {
-                "extend": "copyHtml5",
-                "text": "<i class='far fa-copy'></i> Copiar",
-                "titleAttr": "Copiar",
-                "className": "btn btn-secondary"
-            },{
-                "extend": "excelHtml5",
-                "text": "<i class='fas fa-file-excel'></i> Excel",
-                "titleAttr": "Exportar a excel",
-                "className": "btn btn-success"
-            },{
-                "extend": "pdfHtml5",
-                "text": "<i class='fas fa-pdf'></i> PDF",
-                "titleAttr": "Exportar a PDF",
-                "className": "btn btn-danger",
-                "exportOptions": {
-                    "columns": [ 1, 2, 3, 4, 5, 6, 7, 8 ]
-                }
-            },{
-                "extend": "csvHtml5",
-                "text": "<i class='far fa-csv'></i> CSV",
-                "titleAttr": "Exportar a CSV",
-                "className": "btn btn-info"
-            }
-        ],
-        "responsive": true,
-        "bDestroy": true,
-        "iDisplayLength": 10,
-        "order": [[0,"asc"]]
-    });
-
     var formAlumnoProfesor = document.querySelector('#formAlumnoProfesor');
     formAlumnoProfesor.onsubmit = function(e) {
         e.preventDefault();
 
-        var idalumnoprofesor = document.querySelector('#idalumnoprofesor').value;
-        var alumno = document.querySelector('#listAlumno').value;
-        var profesor = document.querySelector('#listProfesor').value;
-        var periodo = document.querySelector('#listPeriodo').value;
-        var estado = document.querySelector('#listEstado').value;
+        var email_alumno = document.querySelector('#email_alumno').value;
 
-        if(alumno == '' || profesor == '' || periodo == '' || estado == '') {
-            swal('Atencion','Todos los campos son necesarios','error');
+        if(email_alumno == '') {
+            swal('Atencion','Ingrese el email del alumno','error');
             return false;
         }
-
         var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
         var url = './models/alumno-profesor/ajax-alumno-profesor.php';
         var form = new FormData(formAlumnoProfesor);
@@ -82,6 +19,7 @@ document.addEventListener('DOMContentLoaded',function(){
                 var data = JSON.parse(request.responseText);
                 if(data.status) {
                     $('#modalAlumnoProfesor').modal('hide');
+                    location.reload();
                     formAlumnoProfesor.reset();
                     swal('Crear Proceso Alumno',data.msg,'success');
                     tablealumnoprofesor.ajax.reload();
@@ -91,10 +29,12 @@ document.addEventListener('DOMContentLoaded',function(){
             }
         }
     }
-})
+    
+    
 
-function openModalAlumnoProfesor() {
-    document.querySelector('#idalumnoprofesor').value = "";
+function openModalAlumnoProfesor(pm_id) {
+    console.log(pm_id)
+    document.querySelector('#pm_id').value = pm_id;
     document.querySelector('#tituloModal').innerHTML = 'Nuevo Proceso Alumno';
     document.querySelector('#action').innerHTML = 'Guardar';
     document.querySelector('#formAlumnoProfesor').reset();
@@ -156,8 +96,8 @@ function eliminarAlumnoProfesor(id) {
     var idalumnoprofesor = id;
 
     swal({
-        title: "Eliminar Proceso Alumno",
-        text: "Realmente desea eliminar el proceso?",
+        title: "Eliminar Alumno",
+        text: "Realmente desea eliminar el alumno?",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
@@ -177,7 +117,8 @@ function eliminarAlumnoProfesor(id) {
                     var data = JSON.parse(request.responseText);
                     if(data.status) {
                         swal('Eliminar',data.msg,'success');
-                        tablealumnoprofesor.ajax.reload();
+                        //tablealumnoprofesor.ajax.reload();
+                        location.reload();
                     } else {
                         swal('Atencion',data.msg,'error');
                     }
