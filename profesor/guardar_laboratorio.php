@@ -6,6 +6,7 @@ require_once '../includes/conexion.php';
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $objetivos = $_POST['objetivos'];
+    $materia_id = $_POST['materia_id'];
 
     //variables del archivo imagen
     $file = $_FILES['imagen']['name'];
@@ -64,7 +65,7 @@ require_once '../includes/conexion.php';
         move_uploaded_file($temp, $destino);
 
         //Se guarda en la base de datos los campos estaticos
-        $sql = "INSERT INTO laboratorios (titulo, imagen, descripcion, objetivos) VALUES ('$titulo', '$file', '$descripcion', '$objetivos')";
+        $sql = "INSERT INTO laboratorios (titulo, imagen, descripcion, objetivos, materia_id) VALUES ('$titulo', '$file', '$descripcion', '$objetivos', '$materia_id')";
         $query = $pdo->prepare(($sql));
         $query->execute();
         $id_laboratorio = $pdo->lastInsertId();

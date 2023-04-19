@@ -31,6 +31,7 @@ require_once 'includes/modals/modal_laboratorio.php';
                         <div class="form-group col-6">
                             <b> <label for="titulo">Título :</label></b>
                             <input id="titulo" name="titulo" class="form-control" type="text" placeholder="Título">
+                            <input type="hidden" name="materia_id" id="materia_id" value="<?= $_GET['curso'] ?>">
                         </div>
 
                         <div class="form-group col-6">
@@ -154,7 +155,7 @@ require_once 'includes/modals/modal_laboratorio.php';
                             success: function(data) {
                                 if (data == "success") {
                                     //alert("Datos guardados correctamente");
-                                    window.location.href = "lista_laboratorios.php";
+                                    window.location.href = "lista_laboratorios.php?curso=<?= $_GET['curso'] ?>";
                                 } else {
                                     alert(data);
                                 }
