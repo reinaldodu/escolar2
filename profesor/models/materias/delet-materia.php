@@ -2,59 +2,45 @@
 
 require_once '../../../includes/conexion.php';
 
+//eliminar una materia y sus relaciones (laboratorios, profesor_materia, alumno_profesor)
 if($_POST) {
     $idmateria = $_POST['idmateria'];
 
-    $sql = "SELECT * FROM laboratorios WHERE materia_id = ?";
-    $query = $pdo->prepare(($sql));
-    $query->execute(array($idmateria));
-    $data = $query->fetch(PDO::FETCH_ASSOC);
-    if(!empty($data)){
-        $sql = "DELETE * FROM laboratorios WHERE materia_id = ?";
-        $query = $pdo->prepare(($sql));
-        $query->execute(array($idmateria));
-        $data = $query->fetch(PDO::FETCH_ASSOC);
+    //Eliminar la materia
+    $sql = "DELETE FROM materias WHERE materia_id = ?";
+    $query = $pdo->prepare($sql);
+    $result = $query->execute(array($idmateria));
+
+    //Eliminar la imagen de la carpeta images/materias del directorio del profesor
+    $ruta = '../../../images/materias/'.$idmateria.'.jpg';
+    $ruta2 = '../../../images/materias/'.$idmateria.'.png';
+    //verificar si existe la imagen
+    if(file_exists($ruta)) {
+        unlink($ruta);
+    } else if(file_exists($ruta2)) {
+        unlink($ruta2);
     }
+    
 
-    $sql = "SELECT * FROM profesor_materia WHERE materia_id = ?";
-    $query = $pdo->prepare(($sql));
-    $query->execute(array($idmateria));
-    $data = $query->fetch(PDO::FETCH_ASSOC);
-    if(!empty($data)){
-        $sql = "DELETE * FROM profesor_materia WHERE materia_id = ?";
-        $query = $pdo->prepare(($sql));
-        $query->execute(array($idmateria));
-        $data = $query->fetch(PDO::FETCH_ASSOC);
-    }
+    //Eliminar las relaciones de la materia con los laboratorios
+    $sql = "DELETE FROM laboratorios WHERE materia_id = ?";
+    $query = $pdo->prepare($sql);
+    $result = $query->execute(array($idmateria));
 
-    $sql = "SELECT * FROM alumno_profesor WHERE pm_id = ?";
-    $query = $pdo->prepare(($sql));
-    $query->execute(array($idmateria));
-    $data = $query->fetch(PDO::FETCH_ASSOC);
-    if(!empty($data)){
-        $sql = "DELETE * FROM alumno_profesor WHERE pm_id = ?";
-        $query = $pdo->prepare(($sql));
-        $query->execute(array($idmateria));
-        $data = $query->fetch(PDO::FETCH_ASSOC);
-    }
+    //Eliminar las relaciones de la materia con los profesores
+    $sql = "DELETE FROM profesor_materia WHERE materia_id = ?";
+    $query = $pdo->prepare($sql);
+    $result = $query->execute(array($idmateria));
 
-    $sqle = "SELECT * FROM materias WHERE materia_id = ?";
-    $querye = $pdo->prepare(($sqle));
-    $querye->execute(array($idmateria));
-    $data2 = $querye->fetch(PDO::FETCH_ASSOC);
+    //Eliminar las relaciones de la materia con los alumnos
+    $sql = "DELETE FROM alumno_profesor WHERE pm_id IN (SELECT pm_id FROM profesor_materia WHERE materia_id = ?)";
+    $query = $pdo->prepare($sql);
+    $result = $query->execute(array($idmateria));
 
-    if(!empty($data2)){
-        $sql_update = "DELETE FROM materias WHERE materia_id = ?";
-        $query_update = $pdo->prepare($sql_update);
-        $result = $query_update->execute(array($idmateria));
-        if($result){
-            $arrResponse = array('status' => true,'msg' => 'Eliminada Correctamente');
-        } else {
-            $arrResponse = array('status' => false,'msg' => 'Error al eliminar');
-        }
+    if($result) {
+        $arrResponse = array('status' => true,'msg' => 'Materia eliminada correctamente');
     } else {
-        $arrResponse = array('status' => false,'msg' => 'No se puede eliminar, ya tiene una evaluacion asignada');
+        $arrResponse = array('status' => false,'msg' => 'Error al eliminar');
     }
-
     echo json_encode($arrResponse,JSON_UNESCAPED_UNICODE);
 }

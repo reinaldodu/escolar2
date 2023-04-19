@@ -123,7 +123,8 @@ function eliminarMateria(id) {
                     var data = JSON.parse(request.responseText);
                     if(data.status) {
                         swal('Eliminar',data.msg,'success');
-                        tablematerias.ajax.reload();
+                        //tablematerias.ajax.reload();
+                        location.reload();
                     } else {
                         swal('Atencion',data.msg,'error');
                     }
